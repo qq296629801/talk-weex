@@ -171,7 +171,6 @@ export default {
       // 解码
       let packet = CodeUtil.decode(e.data)
       let temp = JSON.stringify(packet)
-      console.log(temp)
       const length = self.messages.push({source: 'origin', message: temp})
       self.go2bottom(length)
     }
@@ -206,7 +205,7 @@ export default {
       }
       websocket.send(CodeUtil.encode(packet))
       const length = this.messages.push({source: 'self', message: msg})
-      this.text = ''
+      this.text = 'test'
       this.go2bottom(length)
     },
     close: function (e) {

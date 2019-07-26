@@ -22263,7 +22263,6 @@ exports.default = {
       // 解码
       var packet = _codec2.default.decode(e.data);
       var temp = JSON.stringify(packet);
-      console.log(temp);
       var length = self.messages.push({ source: 'origin', message: temp });
       self.go2bottom(length);
     };
@@ -22298,7 +22297,7 @@ exports.default = {
       };
       websocket.send(_codec2.default.encode(packet));
       var length = this.messages.push({ source: 'self', message: msg });
-      this.text = '';
+      this.text = 'test';
       this.go2bottom(length);
     },
     close: function close(e) {

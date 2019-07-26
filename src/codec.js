@@ -1,9 +1,9 @@
 // 判断字节序：true则是小端、false则是大端
-const littleEndian = (function () {
-  let buffer = new ArrayBuffer(2)
-  new DataView(buffer).setInt16(0, 256, true)
-  return new Int16Array(buffer)[0] === 256
-})()
+// const littleEndian = (function () {
+//   let buffer = new ArrayBuffer(2)
+//   new DataView(buffer).setInt16(0, 256, true)
+//   return new Int16Array(buffer)[0] === 256
+// })()
 // console.log(littleEndian ? "小端" : "大端");
 
 const CodeUtil = {

@@ -146,7 +146,6 @@
 </style>
 
 <script>
-import {CodeUtil} from './codec'
 const websocket = weex.requireModule('webSocket')
 const modal = weex.requireModule('modal')
 const dom = weex.requireModule('dom')
@@ -201,7 +200,7 @@ export default {
         version: 1,
         command: 3
       }
-      websocket.send(CodeUtil.encode(packet))
+      websocket.send(this.$encode(packet))
       const length = this.messages.push({source: 'self', message: msg})
       this.text = ''
       this.go2bottom(length)

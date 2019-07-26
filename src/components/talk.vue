@@ -2,7 +2,7 @@
 <template>
     <div class="wrapper">
         <scroller class="message-flow">
-            <div v-bind="index" v-for="(item, index) in messages">
+            <div v-bind:key="index" v-bind="index" v-for="(item, index) in messages">
                 <div :class="['message-item', 'from-' + item.source]">
                     <div class="item-inner"  v-if="item.source === 'origin'">
                         <div class="avatar-box">
@@ -25,7 +25,7 @@
             </div>
         </scroller>
         <div class="inputbox">
-            <input class="input" type="text" v-model="text"></input>
+            <input class="input" type="text" value="test" v-model="text"></input>
             <text class="button" @click="send">发送</text>
         </div>
         <div class="loading-wrapper" v-if="!canType">

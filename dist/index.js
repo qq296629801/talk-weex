@@ -22429,7 +22429,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('scroller', {
     staticClass: ["message-flow"]
   }, _vm._l((_vm.messages), function(item, index) {
-    return _c('div', _vm._b({}, 'div', index, false), [_c('div', {
+    return _c('div', _vm._b({
+      key: index
+    }, 'div', index, false), [_c('div', {
       class: ['message-item', 'from-' + item.source]
     }, [(item.source === 'origin') ? _c('div', {
       staticClass: ["item-inner"]
@@ -22454,6 +22456,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: ["input"],
     attrs: {
       "type": "text",
+      "value": "test",
       "value": (_vm.text)
     },
     on: {

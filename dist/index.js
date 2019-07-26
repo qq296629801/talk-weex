@@ -1594,6 +1594,8 @@ Vue.prototype.$encode = _codec2.default.encode; /* global Vue */
 
 /* weex initialized here, please do not move this line */
 
+Vue.prototype.$decode = _codec2.default.decode;
+
 var _require = __webpack_require__(16),
     router = _require.router;
 
@@ -22354,7 +22356,7 @@ exports.default = {
   },
 
   created: function created() {
-    websocket.WebSocket('ws://echo.websocket.org', '');
+    websocket.WebSocket('ws://localhost:9999/chat', '');
     var self = this;
     websocket.binaryType = 'arraybuffer';
     websocket.onopen = function (e) {
@@ -22364,7 +22366,7 @@ exports.default = {
       }, 300);
     };
     websocket.onmessage = function (e) {
-      var length = self.messages.push({ source: 'origin', message: e.data });
+      var length = self.messages.push({ source: 'origin', message: this.$decode(e.data) });
       self.go2bottom(length);
     };
     websocket.onerror = function (e) {
@@ -22394,7 +22396,7 @@ exports.default = {
         toUserId: 1,
         message: msg,
         version: 1,
-        command: 3
+        command: 1
       };
       websocket.send(this.$encode(packet));
       var length = this.messages.push({ source: 'self', message: msg });

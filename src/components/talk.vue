@@ -158,7 +158,7 @@ export default {
     }
   },
   created: function () {
-    websocket.WebSocket('ws://echo.websocket.org', '')
+    websocket.WebSocket('ws://localhost:9999/chat', '')
     const self = this
     websocket.binaryType = 'arraybuffer'
     websocket.onopen = function (e) {
@@ -168,7 +168,7 @@ export default {
       }, 300)
     }
     websocket.onmessage = function (e) {
-      const length = self.messages.push({source: 'origin', message: e.data})
+      const length = self.messages.push({source: 'origin', message: this.$decode(e.data)})
       self.go2bottom(length)
     }
     websocket.onerror = function (e) {
@@ -198,7 +198,7 @@ export default {
         toUserId: 1,
         message: msg,
         version: 1,
-        command: 3
+        command: 1
       }
       websocket.send(this.$encode(packet))
       const length = this.messages.push({source: 'self', message: msg})

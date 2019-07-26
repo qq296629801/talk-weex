@@ -159,9 +159,8 @@ export default {
     }
   },
   created: function () {
-    websocket.WebSocket('ws://localhost:9999/chat', '')
+    websocket.WebSocket('ws://localhost:9999/chat').binaryType = 'arraybuffer'
     const self = this
-    websocket.binaryType = 'arraybuffer'
     websocket.onopen = function (e) {
       // 做一个延时，以免建连太快而抖动
       setTimeout(function () {
@@ -169,8 +168,11 @@ export default {
       }, 300)
     }
     websocket.onmessage = function (e) {
-      console.log(CodeUtil.decode(e.data))
-      const length = self.messages.push({source: 'origin', message: e.data})
+      // 解码
+      let packet = CodeUtil.decode(e.data)
+      let temp = JSON.stringify(packet)
+      console.log(temp)
+      const length = self.messages.push({source: 'origin', message: temp})
       self.go2bottom(length)
     }
     websocket.onerror = function (e) {
@@ -202,7 +204,6 @@ export default {
         version: 1,
         command: 1
       }
-      console.log(CodeUtil.encode(packet))
       websocket.send(CodeUtil.encode(packet))
       const length = this.messages.push({source: 'self', message: msg})
       this.text = ''

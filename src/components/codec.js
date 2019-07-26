@@ -34,7 +34,6 @@ const CodeUtil = {
       bytes[i - 11] = dataView.getUint8(i)
     }
     let json = bytesToString(bytes)
-    console.info(json)
     return JSON.parse(json)
   }
 }

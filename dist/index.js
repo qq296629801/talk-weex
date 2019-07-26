@@ -22251,9 +22251,8 @@ exports.default = {
   },
 
   created: function created() {
-    websocket.WebSocket('ws://localhost:9999/chat', '');
+    websocket.WebSocket('ws://localhost:9999/chat').binaryType = 'arraybuffer';
     var self = this;
-    websocket.binaryType = 'arraybuffer';
     websocket.onopen = function (e) {
       // 做一个延时，以免建连太快而抖动
       setTimeout(function () {
@@ -22261,8 +22260,11 @@ exports.default = {
       }, 300);
     };
     websocket.onmessage = function (e) {
-      console.log(_codec2.default.decode(e.data));
-      var length = self.messages.push({ source: 'origin', message: e.data });
+      // 解码
+      var packet = _codec2.default.decode(e.data);
+      var temp = JSON.stringify(packet);
+      console.log(temp);
+      var length = self.messages.push({ source: 'origin', message: temp });
       self.go2bottom(length);
     };
     websocket.onerror = function (e) {
@@ -22294,7 +22296,6 @@ exports.default = {
         version: 1,
         command: 1
       };
-      console.log(_codec2.default.encode(packet));
       websocket.send(_codec2.default.encode(packet));
       var length = this.messages.push({ source: 'self', message: msg });
       this.text = '';
@@ -22512,7 +22513,6 @@ var CodeUtil = {
       bytes[i - 11] = dataView.getUint8(i);
     }
     var json = bytesToString(bytes);
-    console.info(json);
     return JSON.parse(json);
   }
 };

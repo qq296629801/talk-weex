@@ -25,7 +25,7 @@
             </div>
         </scroller>
         <div class="inputbox">
-            <input class="input" type="text" value="test" v-model="text"></input>
+            <input class="input" type="text" v-model="text"></input>
             <text class="button" @click="send">发送</text>
         </div>
         <div class="loading-wrapper" v-if="!canType">
@@ -152,7 +152,7 @@ const dom = weex.requireModule('dom')
 export default {
   data () {
     return {
-      text: '',
+      text: 'test',
       canType: false,
       messages: [{source: 'origin', message: '请问您有什么问题？'}]
     }

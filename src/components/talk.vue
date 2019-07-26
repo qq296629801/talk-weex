@@ -2,7 +2,7 @@
 <template>
     <div class="wrapper">
         <scroller class="message-flow">
-            <div v-bind:key="index" v-bind="index" v-for="(item, index) in messages">
+            <div v-bind="index" v-for="(item, index) in messages">
                 <div :class="['message-item', 'from-' + item.source]">
                     <div class="item-inner"  v-if="item.source === 'origin'">
                         <div class="avatar-box">
@@ -146,10 +146,10 @@
 </style>
 
 <script>
+import {CodeUtil} from './codec'
 const websocket = weex.requireModule('webSocket')
 const modal = weex.requireModule('modal')
 const dom = weex.requireModule('dom')
-
 export default {
   data () {
     return {
@@ -161,7 +161,7 @@ export default {
   created: function () {
     websocket.WebSocket('ws://echo.websocket.org', '')
     const self = this
-
+    websocket.binaryType = 'arraybuffer'
     websocket.onopen = function (e) {
       // 做一个延时，以免建连太快而抖动
       setTimeout(function () {
@@ -194,7 +194,14 @@ export default {
         })
         return
       }
-      websocket.send(msg)
+
+      let packet = {
+        toUserId: 1,
+        message: msg,
+        version: 1,
+        command: 3
+      }
+      websocket.send(CodeUtil.encode(packet))
       const length = this.messages.push({source: 'self', message: msg})
       this.text = ''
       this.go2bottom(length)

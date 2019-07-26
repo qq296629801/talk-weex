@@ -1590,7 +1590,7 @@ module.exports = __vue_exports__
 var _require = __webpack_require__(15),
     router = _require.router;
 
-var App = __webpack_require__(259);
+var App = __webpack_require__(260);
 /* eslint-disable no-new */
 new Vue(Vue.util.extend({ el: '#root', router: router }, App));
 router.push('/');
@@ -1624,11 +1624,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Vue.use(_vueRouter2.default); /* global Vue */
 var router = exports.router = new _vueRouter2.default({
   routes: [{
-    path: '/',
+    path: '/tool',
     name: 'toolbar',
     component: _toolbar2.default
   }, {
-    path: '/talk',
+    path: '/',
     name: 'talk',
     component: _talk2.default
   }]
@@ -21918,7 +21918,7 @@ __vue_styles__.push(__webpack_require__(256)
 __vue_exports__ = __webpack_require__(257)
 
 /* template */
-var __vue_template__ = __webpack_require__(258)
+var __vue_template__ = __webpack_require__(259)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -22084,7 +22084,10 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-//
+
+var _codec = __webpack_require__(258);
+
+var websocket = weex.requireModule('webSocket'); //
 //
 //
 //
@@ -22232,10 +22235,8 @@ Object.defineProperty(exports, "__esModule", {
 //
 //
 
-var websocket = weex.requireModule('webSocket');
 var modal = weex.requireModule('modal');
 var dom = weex.requireModule('dom');
-
 exports.default = {
   data: function data() {
     return {
@@ -22248,7 +22249,7 @@ exports.default = {
   created: function created() {
     websocket.WebSocket('ws://echo.websocket.org', '');
     var self = this;
-
+    websocket.binaryType = 'arraybuffer';
     websocket.onopen = function (e) {
       // 做一个延时，以免建连太快而抖动
       setTimeout(function () {
@@ -22281,7 +22282,14 @@ exports.default = {
         });
         return;
       }
-      websocket.send(msg);
+
+      var packet = {
+        toUserId: 1,
+        message: msg,
+        version: 1,
+        command: 3
+      };
+      websocket.send(_codec.CodeUtil.encode(packet));
       var length = this.messages.push({ source: 'self', message: msg });
       this.text = '';
       this.go2bottom(length);
@@ -22304,6 +22312,108 @@ exports.default = {
 
 /***/ }),
 /* 258 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// 判断字节序：true则是小端、false则是大端
+var littleEndian = function () {
+  var buffer = new ArrayBuffer(2);
+  new DataView(buffer).setInt16(0, 256, true);
+  return new Int16Array(buffer)[0] === 256;
+}();
+// console.log(littleEndian ? "小端" : "大端");
+
+var CodeUtil = {
+  encode: function encode(packet) {
+    var bytes = stringToBytes(JSON.stringify(packet));
+    var buffer = new ArrayBuffer(11 + bytes.length);
+    if (buffer.byteLength !== 11 + bytes.length) {
+      console.log('编码分配内存失败，内存不足');
+      return null;
+    }
+    var dataView = new DataView(buffer);
+
+    dataView.setInt32(0, 0x12345678);
+    dataView.setInt8(4, packet.version);
+    dataView.setInt8(5, 1); // 写死1表示json序列化
+    dataView.setInt8(6, packet.command);
+    dataView.setInt32(7, bytes.length);
+    for (var i = 11; i < bytes.length + 11; i++) {
+      dataView.setUint8(i, bytes[i - 11]);
+    }
+    return dataView.buffer;
+  },
+  decode: function decode(buffer) {
+    var dataView = new DataView(buffer);
+    var lenght = dataView.getInt32(7);
+    var bytes = [];
+    for (var i = 11; i < lenght + 11; i++) {
+      bytes[i - 11] = dataView.getUint8(i);
+    }
+    var json = bytesToString(bytes);
+    console.info(json);
+    return JSON.parse(json);
+  }
+};
+
+var stringToBytes = function stringToBytes(str) {
+  var bytes = [];
+  var len = void 0,
+      c = void 0;
+  len = str.length;
+  for (var i = 0; i < len; i++) {
+    c = str.charCodeAt(i);
+    if (c >= 0x010000 && c <= 0x10FFFF) {
+      bytes.push(c >> 18 & 0x07 | 0xF0);
+      bytes.push(c >> 12 & 0x3F | 0x80);
+      bytes.push(c >> 6 & 0x3F | 0x80);
+      bytes.push(c & 0x3F | 0x80);
+    } else if (c >= 0x000800 && c <= 0x00FFFF) {
+      bytes.push(c >> 12 & 0x0F | 0xE0);
+      bytes.push(c >> 6 & 0x3F | 0x80);
+      bytes.push(c & 0x3F | 0x80);
+    } else if (c >= 0x000080 && c <= 0x0007FF) {
+      bytes.push(c >> 6 & 0x1F | 0xC0);
+      bytes.push(c & 0x3F | 0x80);
+    } else {
+      bytes.push(c & 0xFF);
+    }
+  }
+  return bytes;
+};
+
+var bytesToString = function bytesToString(bytes) {
+  if (typeof bytes === 'string') {
+    return bytes;
+  }
+  var str = '';
+  var _arr = bytes;
+  for (var i = 0; i < _arr.length; i++) {
+    var one = _arr[i].toString(2);
+    var v = one.match(/^1+?(?=0)/);
+    if (v && one.length === 8) {
+      var bytesLength = v[0].length;
+      var store = _arr[i].toString(2).slice(7 - bytesLength);
+      for (var st = 1; st < bytesLength; st++) {
+        store += _arr[st + i].toString(2).slice(2);
+      }
+      str += String.fromCharCode(parseInt(store, 2));
+      i += bytesLength - 1;
+    } else {
+      str += String.fromCharCode(_arr[i]);
+    }
+  }
+  return str;
+};
+exports.default = CodeUtil;
+
+/***/ }),
+/* 259 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -22312,9 +22422,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('scroller', {
     staticClass: ["message-flow"]
   }, _vm._l((_vm.messages), function(item, index) {
-    return _c('div', _vm._b({
-      key: index
-    }, 'div', index, false), [_c('div', {
+    return _c('div', _vm._b({}, 'div', index, false), [_c('div', {
       class: ['message-item', 'from-' + item.source]
     }, [(item.source === 'origin') ? _c('div', {
       staticClass: ["item-inner"]
@@ -22389,18 +22497,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 module.exports.render._withStripped = true
 
 /***/ }),
-/* 259 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = []
 
 /* styles */
-__vue_styles__.push(__webpack_require__(260)
+__vue_styles__.push(__webpack_require__(261)
 )
 
 /* template */
-var __vue_template__ = __webpack_require__(261)
+var __vue_template__ = __webpack_require__(262)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -22430,7 +22538,7 @@ module.exports = __vue_exports__
 
 
 /***/ }),
-/* 260 */
+/* 261 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -22441,7 +22549,7 @@ module.exports = {
 }
 
 /***/ }),
-/* 261 */
+/* 262 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;

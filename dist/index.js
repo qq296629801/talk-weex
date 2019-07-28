@@ -21791,21 +21791,21 @@ exports.default = {
   tabTitles: [{
     title: '聊天',
     icon: 'http://47.105.74.119:8080/聊天-未选中.svg',
-    activeIcon: 'http://47.105.74.119:8080/聊天-选中.svg'
+    activeIcon: 'http://47.105.74.119:8080/聊天-选中.svg',
+    badge: 10
   }, {
     title: '群聊',
     icon: 'http://47.105.74.119:8080/群聊-未选中.svg',
-    activeIcon: 'http://47.105.74.119:8080/群聊-未选中.svg'
+    activeIcon: 'http://47.105.74.119:8080/群聊-选中.svg'
   }, {
     title: '我的',
     icon: 'http://47.105.74.119:8080/我的／未选中.svg',
-    activeIcon: 'http://47.105.74.119:8080/我的／选中.svg',
-    badge: 10
+    activeIcon: 'http://47.105.74.119:8080/我的／选中.svg'
   }],
   tabStyles: {
     bgColor: '#FFFFFF',
-    titleColor: '#666666',
-    activeTitleColor: '#3D3D3D',
+    titleColor: '#9d9d9d',
+    activeTitleColor: '#3975ff',
     activeBgColor: '#FFFFFF',
     isActiveTitleBold: true,
     iconWidth: 70,
@@ -21815,40 +21815,6 @@ exports.default = {
     fontSize: 24,
     textPaddingLeft: 10,
     textPaddingRight: 10
-  },
-
-  // 使用 iconFont 模式的tab title配置
-  tabIconFontTitles: [{
-    title: '首页',
-    codePoint: '\uE623'
-  }, {
-    title: '特别推荐',
-    codePoint: '\uE608'
-  }, {
-    title: '消息中心',
-    codePoint: '\uE752',
-    badge: 5
-  }, {
-    title: '我的主页',
-    codePoint: '\uE601',
-    dot: true
-  }],
-  tabIconFontStyles: {
-    bgColor: '#FFFFFF',
-    titleColor: '#666666',
-    activeTitleColor: '#3D3D3D',
-    activeBgColor: '#FFFFFF',
-    isActiveTitleBold: true,
-    width: 160,
-    height: 120,
-    fontSize: 24,
-    textPaddingLeft: 10,
-    textPaddingRight: 10,
-    iconFontSize: 50,
-    iconFontMarginBottom: 8,
-    iconFontColor: '#333333',
-    activeIconFontColor: 'red',
-    iconFontUrl: '//at.alicdn.com/t/font_501019_mauqv15evc1pp66r.ttf'
   }
 };
 

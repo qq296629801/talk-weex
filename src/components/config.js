@@ -7,26 +7,20 @@ export default {
   // 正常模式的tab title配置
   tabTitles: [
     {
-      title: '首页',
-      icon: 'https://gw.alicdn.com/tfs/TB1MWXdSpXXXXcmXXXXXXXXXXXX-72-72.png',
-      activeIcon: 'https://gw.alicdn.com/tfs/TB1kCk2SXXXXXXFXFXXXXXXXXXX-72-72.png'
+      title: '聊天',
+      icon: 'http://47.105.74.119:8080/聊天-未选中.svg',
+      activeIcon: 'http://47.105.74.119:8080/聊天-选中.svg'
     },
     {
-      title: '特别推荐',
-      icon: 'https://gw.alicdn.com/tfs/TB1ARoKSXXXXXc9XVXXXXXXXXXX-72-72.png',
-      activeIcon: 'https://gw.alicdn.com/tfs/TB19Z72SXXXXXamXFXXXXXXXXXX-72-72.png'
+      title: '群聊',
+      icon: 'http://47.105.74.119:8080/群聊-未选中.svg',
+      activeIcon: 'http://47.105.74.119:8080/群聊-未选中.svg'
     },
     {
-      title: '消息中心',
-      icon: 'https://gw.alicdn.com/tfs/TB1VKMISXXXXXbyaXXXXXXXXXXX-72-72.png',
-      activeIcon: 'https://gw.alicdn.com/tfs/TB1aTgZSXXXXXazXFXXXXXXXXXX-72-72.png',
-      badge: 5
-    },
-    {
-      title: '我的主页',
-      icon: 'https://gw.alicdn.com/tfs/TB1Do3tSXXXXXXMaFXXXXXXXXXX-72-72.png',
-      activeIcon: 'https://gw.alicdn.com/tfs/TB1LiNhSpXXXXaWXXXXXXXXXXXX-72-72.png',
-      dot: true
+      title: '我的',
+      icon: 'http://47.105.74.119:8080/我的／未选中.svg',
+      activeIcon: 'http://47.105.74.119:8080/我的／选中.svg',
+      badge: 10
     }
   ],
   tabStyles: {

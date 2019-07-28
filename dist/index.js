@@ -1624,11 +1624,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Vue.use(_vueRouter2.default); /* global Vue */
 var router = exports.router = new _vueRouter2.default({
   routes: [{
-    path: '/tool',
+    path: '/',
     name: 'toolbar',
     component: _toolbar2.default
   }, {
-    path: '/',
+    path: '/talk',
     name: 'talk',
     component: _talk2.default
   }]
@@ -4428,10 +4428,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 //
 //
-//
-//
-//
-//
 
 exports.default = {
   components: { WxcTabBar: _weexUi.WxcTabBar, WxcCell: _weexUi.WxcCell, WxcSearchbar: _weexUi.WxcSearchbar },
@@ -4439,14 +4435,11 @@ exports.default = {
     return {
       tabTitles: _config2.default.tabTitles,
       tabStyles: _config2.default.tabStyles,
-      lists: [1, 2, 3],
       value: ''
     };
   },
   created: function created() {
     var tabPageHeight = _weexUi.Utils.env.getPageHeight();
-    // If the page doesn't have a navigation bar
-    // const tabPageHeight = env.deviceHeight / env.deviceWidth * 750;
     var tabStyles = this.tabStyles;
 
     this.contentStyle = { height: tabPageHeight - tabStyles.height + 'px' };
@@ -4459,7 +4452,6 @@ exports.default = {
     }
   }
 };
-// https://github.com/alibaba/weex-ui/blob/master/example/tab-bar/config.js
 
 /***/ }),
 /* 20 */
@@ -21797,23 +21789,18 @@ exports.default = {
 
   // 正常模式的tab title配置
   tabTitles: [{
-    title: '首页',
-    icon: 'https://gw.alicdn.com/tfs/TB1MWXdSpXXXXcmXXXXXXXXXXXX-72-72.png',
-    activeIcon: 'https://gw.alicdn.com/tfs/TB1kCk2SXXXXXXFXFXXXXXXXXXX-72-72.png'
+    title: '聊天',
+    icon: 'http://47.105.74.119:8080/聊天-未选中.svg',
+    activeIcon: 'http://47.105.74.119:8080/聊天-选中.svg'
   }, {
-    title: '特别推荐',
-    icon: 'https://gw.alicdn.com/tfs/TB1ARoKSXXXXXc9XVXXXXXXXXXX-72-72.png',
-    activeIcon: 'https://gw.alicdn.com/tfs/TB19Z72SXXXXXamXFXXXXXXXXXX-72-72.png'
+    title: '群聊',
+    icon: 'http://47.105.74.119:8080/群聊-未选中.svg',
+    activeIcon: 'http://47.105.74.119:8080/群聊-未选中.svg'
   }, {
-    title: '消息中心',
-    icon: 'https://gw.alicdn.com/tfs/TB1VKMISXXXXXbyaXXXXXXXXXXX-72-72.png',
-    activeIcon: 'https://gw.alicdn.com/tfs/TB1aTgZSXXXXXazXFXXXXXXXXXX-72-72.png',
-    badge: 5
-  }, {
-    title: '我的主页',
-    icon: 'https://gw.alicdn.com/tfs/TB1Do3tSXXXXXXMaFXXXXXXXXXX-72-72.png',
-    activeIcon: 'https://gw.alicdn.com/tfs/TB1LiNhSpXXXXaWXXXXXXXXXXXX-72-72.png',
-    dot: true
+    title: '我的',
+    icon: 'http://47.105.74.119:8080/我的／未选中.svg',
+    activeIcon: 'http://47.105.74.119:8080/我的／选中.svg',
+    badge: 10
   }],
   tabStyles: {
     bgColor: '#FFFFFF',
@@ -21882,15 +21869,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: ["item-container"],
     style: _vm.contentStyle
-  }, [_c('list', _vm._l((_vm.lists), function(num) {
-    return _c('cell', {
-      key: num,
-      appendAsTree: true,
-      attrs: {
-        "append": "tree"
-      }
-    }, [_c('text', [_vm._v(_vm._s(num))])])
-  }))]), _c('div', {
+  }), _c('div', {
     staticClass: ["item-container"],
     style: _vm.contentStyle
   }, [_c('text', [_vm._v("Hot")])]), _c('div', {
@@ -21899,7 +21878,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('text', [_vm._v("Message")])]), _c('div', {
     staticClass: ["item-container"],
     style: _vm.contentStyle
-  }, [_c('text', [_vm._v("My")])])])
+  })])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 
@@ -22085,7 +22064,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _codec = __webpack_require__(263);
+var _codec = __webpack_require__(258);
 
 var _codec2 = _interopRequireDefault(_codec);
 
@@ -22317,7 +22296,107 @@ exports.default = {
 };
 
 /***/ }),
-/* 258 */,
+/* 258 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// 判断字节序：true则是小端、false则是大端
+// const littleEndian = (function () {
+//   let buffer = new ArrayBuffer(2)
+//   new DataView(buffer).setInt16(0, 256, true)
+//   return new Int16Array(buffer)[0] === 256
+// })()
+// console.log(littleEndian ? "小端" : "大端");
+
+var CodeUtil = {
+  encode: function encode(packet) {
+    var bytes = stringToBytes(JSON.stringify(packet));
+    var buffer = new ArrayBuffer(11 + bytes.length);
+    if (buffer.byteLength !== 11 + bytes.length) {
+      console.log('编码分配内存失败，内存不足');
+      return null;
+    }
+    var dataView = new DataView(buffer);
+
+    dataView.setInt32(0, 0x12345678);
+    dataView.setInt8(4, packet.version);
+    dataView.setInt8(5, 1); // 写死1表示json序列化
+    dataView.setInt8(6, packet.command);
+    dataView.setInt32(7, bytes.length);
+    for (var i = 11; i < bytes.length + 11; i++) {
+      dataView.setUint8(i, bytes[i - 11]);
+    }
+    return dataView.buffer;
+  },
+  decode: function decode(buffer) {
+    var dataView = new DataView(buffer);
+    var lenght = dataView.getInt32(7);
+    var bytes = [];
+    for (var i = 11; i < lenght + 11; i++) {
+      bytes[i - 11] = dataView.getUint8(i);
+    }
+    var json = bytesToString(bytes);
+    return JSON.parse(json);
+  }
+};
+
+var stringToBytes = function stringToBytes(str) {
+  var bytes = [];
+  var len = void 0,
+      c = void 0;
+  len = str.length;
+  for (var i = 0; i < len; i++) {
+    c = str.charCodeAt(i);
+    if (c >= 0x010000 && c <= 0x10FFFF) {
+      bytes.push(c >> 18 & 0x07 | 0xF0);
+      bytes.push(c >> 12 & 0x3F | 0x80);
+      bytes.push(c >> 6 & 0x3F | 0x80);
+      bytes.push(c & 0x3F | 0x80);
+    } else if (c >= 0x000800 && c <= 0x00FFFF) {
+      bytes.push(c >> 12 & 0x0F | 0xE0);
+      bytes.push(c >> 6 & 0x3F | 0x80);
+      bytes.push(c & 0x3F | 0x80);
+    } else if (c >= 0x000080 && c <= 0x0007FF) {
+      bytes.push(c >> 6 & 0x1F | 0xC0);
+      bytes.push(c & 0x3F | 0x80);
+    } else {
+      bytes.push(c & 0xFF);
+    }
+  }
+  return bytes;
+};
+
+var bytesToString = function bytesToString(bytes) {
+  if (typeof bytes === 'string') {
+    return bytes;
+  }
+  var str = '';
+  var _arr = bytes;
+  for (var i = 0; i < _arr.length; i++) {
+    var one = _arr[i].toString(2);
+    var v = one.match(/^1+?(?=0)/);
+    if (v && one.length === 8) {
+      var bytesLength = v[0].length;
+      var store = _arr[i].toString(2).slice(7 - bytesLength);
+      for (var st = 1; st < bytesLength; st++) {
+        store += _arr[st + i].toString(2).slice(2);
+      }
+      str += String.fromCharCode(parseInt(store, 2));
+      i += bytesLength - 1;
+    } else {
+      str += String.fromCharCode(_arr[i]);
+    }
+  }
+  return str;
+};
+exports.default = CodeUtil;
+
+/***/ }),
 /* 259 */
 /***/ (function(module, exports) {
 
@@ -22465,107 +22544,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('router-view')], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
-
-/***/ }),
-/* 263 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-// 判断字节序：true则是小端、false则是大端
-// const littleEndian = (function () {
-//   let buffer = new ArrayBuffer(2)
-//   new DataView(buffer).setInt16(0, 256, true)
-//   return new Int16Array(buffer)[0] === 256
-// })()
-// console.log(littleEndian ? "小端" : "大端");
-
-var CodeUtil = {
-  encode: function encode(packet) {
-    var bytes = stringToBytes(JSON.stringify(packet));
-    var buffer = new ArrayBuffer(11 + bytes.length);
-    if (buffer.byteLength !== 11 + bytes.length) {
-      console.log('编码分配内存失败，内存不足');
-      return null;
-    }
-    var dataView = new DataView(buffer);
-
-    dataView.setInt32(0, 0x12345678);
-    dataView.setInt8(4, packet.version);
-    dataView.setInt8(5, 1); // 写死1表示json序列化
-    dataView.setInt8(6, packet.command);
-    dataView.setInt32(7, bytes.length);
-    for (var i = 11; i < bytes.length + 11; i++) {
-      dataView.setUint8(i, bytes[i - 11]);
-    }
-    return dataView.buffer;
-  },
-  decode: function decode(buffer) {
-    var dataView = new DataView(buffer);
-    var lenght = dataView.getInt32(7);
-    var bytes = [];
-    for (var i = 11; i < lenght + 11; i++) {
-      bytes[i - 11] = dataView.getUint8(i);
-    }
-    var json = bytesToString(bytes);
-    return JSON.parse(json);
-  }
-};
-
-var stringToBytes = function stringToBytes(str) {
-  var bytes = [];
-  var len = void 0,
-      c = void 0;
-  len = str.length;
-  for (var i = 0; i < len; i++) {
-    c = str.charCodeAt(i);
-    if (c >= 0x010000 && c <= 0x10FFFF) {
-      bytes.push(c >> 18 & 0x07 | 0xF0);
-      bytes.push(c >> 12 & 0x3F | 0x80);
-      bytes.push(c >> 6 & 0x3F | 0x80);
-      bytes.push(c & 0x3F | 0x80);
-    } else if (c >= 0x000800 && c <= 0x00FFFF) {
-      bytes.push(c >> 12 & 0x0F | 0xE0);
-      bytes.push(c >> 6 & 0x3F | 0x80);
-      bytes.push(c & 0x3F | 0x80);
-    } else if (c >= 0x000080 && c <= 0x0007FF) {
-      bytes.push(c >> 6 & 0x1F | 0xC0);
-      bytes.push(c & 0x3F | 0x80);
-    } else {
-      bytes.push(c & 0xFF);
-    }
-  }
-  return bytes;
-};
-
-var bytesToString = function bytesToString(bytes) {
-  if (typeof bytes === 'string') {
-    return bytes;
-  }
-  var str = '';
-  var _arr = bytes;
-  for (var i = 0; i < _arr.length; i++) {
-    var one = _arr[i].toString(2);
-    var v = one.match(/^1+?(?=0)/);
-    if (v && one.length === 8) {
-      var bytesLength = v[0].length;
-      var store = _arr[i].toString(2).slice(7 - bytesLength);
-      for (var st = 1; st < bytesLength; st++) {
-        store += _arr[st + i].toString(2).slice(2);
-      }
-      str += String.fromCharCode(parseInt(store, 2));
-      i += bytesLength - 1;
-    } else {
-      str += String.fromCharCode(_arr[i]);
-    }
-  }
-  return str;
-};
-exports.default = CodeUtil;
 
 /***/ })
 /******/ ]);

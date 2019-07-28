@@ -8,12 +8,12 @@ Vue.use(Router)
 export const router = new Router({
   routes: [
     {
-      path: '/tool',
+      path: '/',
       name: 'toolbar',
       component: toolbar
     },
     {
-      path: '/',
+      path: '/talk',
       name: 'talk',
       component: talk
     }
